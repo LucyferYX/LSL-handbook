@@ -1,0 +1,724 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LSL Demo Handbook</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════ HERO -->
+<div class="hero">
+  <div class="page-wrap">
+    <div class="hero-label">Project Overview</div>
+    <h1>Latvian Sign Language<br><span>Demo Handbook</span></h1>
+    <p class="hero-sub">
+      A complete working pipeline for <b>Latvian Sign Language (LSL) recreation</b>.
+      From T5 model translating Latvian text into LSL glosses, to rendering sign animations on a 3D human model.
+    </p>
+    <div class="hero-links">
+      <a class="btn btn-primary" href="https://huggingface.co/spaces/LucyferYX/LSL-demo" target="_blank">▶ Live Demo</a>
+      <a class="btn btn-outline" href="https://github.com/LucyferYX/LSL-t5" target="_blank">⌥ T5/Dataset Repo</a>
+      <a class="btn btn-outline" href="https://github.com/LucyferYX/LSL-blender" target="_blank">⬡ Blender Repo</a>
+      <a class="btn btn-outline" href="https://huggingface.co/spaces/LucyferYX/LSL-demo/tree/main" target="_blank">🗲 Gradio App Repo</a>
+    </div>
+  </div>
+</div>
+
+<div class="page-wrap">
+
+  <!-- ── Table of Contents ── -->
+  <div class="toc">
+    <h4>Table of Contents</h4>
+    <ul>
+      <li>
+        <span class="toc-section-label">01 — Overview</span>
+        <ul class="toc-sublist">
+          <li><a href="#repos">Repository Overview</a></li>
+          <li><a href="#pipeline">System Pipeline</a></li>
+        </ul>
+      </li>
+      <li>
+        <span class="toc-section-label">02 — Gradio Application</span>
+        <ul class="toc-sublist">
+          <li><a href="#app">The LSL Demo App Overview</a></li>
+          <li><a href="#prepost">The LSL Demo App Pre- &amp; Post-processing</a></li>
+        </ul>
+      </li>
+      <li>
+        <span class="toc-section-label">03 — T5 Model / Dataset</span>
+        <ul class="toc-sublist">
+          <li><a href="#model">The LSL T5 Model</a></li>
+          <li><a href="#dataset">The LSL Dataset</a></li>
+        </ul>
+      </li>
+      <li>
+        <span class="toc-section-label">04 — Blender Animation Pipeline</span>
+        <ul class="toc-sublist">
+          <li><a href="#animations">The 3D Animation Pipeline</a></li>
+        </ul>
+      </li>
+      <li>
+        <span class="toc-section-label">05 — Acknowledgements</span>
+        <ul class="toc-sublist">
+          <li><a href="#acknowledgements">Acknowledgements</a></li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+
+
+  <!-- ═══════════════════════════════════════════════════ REPOS -->
+  <section id="repos">
+    <div class="section-label">01 — Overview</div>
+    <h2>Repository Overview</h2>
+    <p class="lead">
+      The project is split across <b>4 repositories</b> that cover dataset, T5 model, 3D model, animations, handbook and Gradio web app.
+      All repos are independent from each other. Only clone the ones relevant to your work.
+    </p>
+
+    <div style="margin-bottom:16px;">
+      <pre style="line-height:1.9;">LSL/
+├── LSL-demo/                  <span class="cm"># Gradio web app + Three.js viewer</span>
+├── LSL-t5/                    <span class="cm"># mT5 fine-tuning code, training notebook, dataset text files</span>
+├── LSL-blender/               <span class="cm"># Blender rig, animation creation, baking scripts, coordinate files</span>
+└── LSL-handbook/              <span class="cm"># This documentation</span>
+      </pre>
+    </div>
+
+    <div class="card-grid" style="grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));">
+      <div class="card">
+        <h3><span class="icon">▶</span>LSL-demo</h3>
+        <p>Clone to work on the Gradio app web demo.</p>
+        <p class="card-url"><a href="https://huggingface.co/spaces/LucyferYX/LSL-demo/tree/main" class="card-link">huggingface.co/spaces/<br>LucyferYX/LSL-demo</a></p>
+      </div>
+      <div class="card">
+        <h3><span class="icon">⌥</span>LSL-t5</h3>
+        <p>Clone to work on the T5 model and dataset.</p>
+        <p class="card-url"><a href="https://github.com/LucyferYX/LSL-t5" class="card-link">github.com/<br>LucyferYX/LSL-t5</a></p>
+      </div>
+      <div class="card">
+        <h3><span class="icon">⬡</span>LSL-blender</h3>
+        <p>Clone to work on Blender rig and animations.</p>
+        <p class="card-url"><a href="https://github.com/LucyferYX/LSL-blender" class="card-link">github.com/<br>LucyferYX/LSL-blender</a></p>
+      </div>
+      <div class="card">
+        <h3><span class="icon">◎</span>LSL-handbook</h3>
+        <p>Clone to work on this documentation.</p>
+        <p class="card-url"><a href="https://github.com/LucyferYX/LSL-handbook" class="card-link">github.com/<br>LucyferYX/LSL-handbook</a></p>
+      </div>
+    </div>
+
+    <h3 class="section-h3-sm">Quick-start by role</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>I want to…</th><th>Repo needed</th><th>Section</th></tr></thead>
+        <tbody>
+          <tr><td>Run or modify the web demo</td><td><code>LSL-demo</code></td><td><a href="#app">The LSL Demo App</a></td></tr>
+          <tr><td>Retrain or expand the translation model</td><td><code>LSL-t5</code> → then copy model files to <code>LSL-demo</code></td><td><a href="#model">The LSL T5 Model</a> &amp; <a href="#dataset">The LSL Dataset</a></td></tr>
+          <tr><td>Add or edit sign animations</td><td><code>LSL-blender</code> → then copy GLB to <code>LSL-demo</code></td><td><a href="#animations">The 3D Animation Pipeline</a></td></tr>
+          <tr><td>Edit this document</td><td><code>LSL-handbook</code></td><td><a href="#handbook">Handbook</a></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 class="section-h3">Setup</h3>
+    <pre><span class="cm"># 1. Clone the chosen repo</span>
+git clone https://github.com/LucyferYX/LSL-demo
+
+<span class="cm"># 2. Install dependencies</span>
+pip install -r requirements.txt</pre>
+  </section>
+
+
+  <!-- ═══════════════════════════════════════════════════ PIPELINE -->
+  <div class="pipeline-section" id="pipeline">
+    <div class="section-label">01 — Overview</div>
+    <h2>System Pipeline</h2>
+    <p>
+      The system consists of 3 stages:
+      the T5 model produces glosses from text, the Blender pipeline produces animations,
+      and the Gradio app wires both together.
+    </p>
+
+    <div class="flow">
+      <div class="flow-step">Latvian Text Input<small>User or example chip</small></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">Pre-processing<small>Numbers, names, tokens</small></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">T5 Inference<small>Pruned vocabulary</small></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">Post-processing<small>Expand &amp; fingerspell</small></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">Sign Sequence<small>Gloss word list</small></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">3D Animation<small>Three.js / GLB clips</small></div>
+    </div>
+
+    <div class="img-placeholder" style="margin-top:24px;">
+      <span class="ph-icon">◈</span>
+      <strong>Architecture diagram (WIP)</strong>
+      A flowchart showing the three subsystems (Gradio app, mT5 model, Blender pipeline)
+      and their data boundaries would go here.
+    </div>
+  </div>
+
+
+  <div class="section-sep"></div>
+
+  <!-- ═══════════════════════════════════════════════════ APP -->
+  <section id="app">
+    <div class="section-label">02 — Gradio Application</div>
+    <h2>The LSL Demo App Overview</h2>
+    <p class="lead">
+      The web interface is built with <strong>Gradio Blocks</strong> and hosted on Hugging Face Spaces.
+      It lets users type a Latvian sentence, see each step of the translation pipeline, see animation details and watch
+      a 3D avatar perform the resulting LSL sign language sequence.
+    </p>
+
+    <figure class="screenshot-wrap">
+      <img src="images/gradio_app_screenshot.png" alt="LSL Demo Gradio application screenshot">
+    </figure>
+
+    <h3 class="section-h3">Using the App</h3>
+    <ul class="steps">
+      <li>
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <strong>Enter Latvian text</strong>
+          <p>Type a Latvian sentence in the text box or click one of the example chips below it.
+          Chips are randomly sampled from the training dataset and can be refreshed with the Refresh button.
+          Press <kbd>Enter</kbd>
+          or the ↑ button. The backend preprocesses the text, runs the T5 model and builds an
+          ordered list of LSL sign glosses for animation.</p>
+        </div>
+      </li>
+      <li>
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <strong>Watch the animation</strong>
+          <p>The 3D avatar (rendered in a Three.js iframe) plays each sign in sequence, crossfading
+          smoothly between clips. Use the speed slider (0.25x-2x) to adjust playback pace.
+          Use replay (↻) to restart and stop (■) to halt playback.</p>
+        </div>
+      </li>
+      <li>
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <strong>Inspect the pipeline</strong>
+          <p>Expand <b>Translation details</b> to see every transformation step: the original input,
+          preprocessed text, raw model output, and final post-processed gloss sequence.
+          A dataset-match indicator shows whether the sentence exists in the training data and
+          whether the T5 model output matches the glosses. Expand <b>Animation details</b>
+          to see the exact sequence of LSL animation clip names played in the 3D viewer.</p>
+        </div>
+      </li>
+    </ul>
+  </section>
+
+  <div class="section-sep"></div>
+
+  <!-- ═══════════════════════════════════════════════════ PRE/POST -->
+  <section id="prepost">
+    <div class="section-label">02 — Gradio Application</div>
+    <h2>The LSL Demo App Pre- &amp; Post-processing</h2>
+    <p class="lead">
+      Before the text reaches the model, unknown words and numbers are normalised into placeholder
+      tokens. After the model outputs glosses, those placeholders are expanded back into LSL signs.
+    </p>
+
+    <div class="card-grid">
+      <div class="card">
+        <h3><span class="icon">→</span>Preprocessing</h3>
+        <ul>
+          <li style="margin-top:8px;"><strong>Unknown words</strong>. Words absent from <code>words_list.json</code>
+            are replaced with <code>[NAME]</code> and queued for fingerspelling (useful for proper names and
+            uncommon terms).</li>
+          <li><strong>Numbers &amp; units</strong>. Numeric values become <code>[NUM]</code>,
+            degree symbols are rewritten as <em>grādi</em>, unit suffixes written against a digit
+            receive a separating space. Detailed in table below.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3><span class="icon">←</span>Postprocessing</h3>
+        <ul>
+          <li><strong>Names</strong>. Each <code>[NAME]</code> is replaced with its original word
+            spelled letter-by-letter into fingerspelling signs.</li>
+          <li style="margin-top:8px;"><strong>Numbers</strong>. Each <code>[NUM]</code> is expanded
+            to 1 or more sign words. Times, decimals, ordinals and large values each follow a
+            different rule, see the table below.</li>
+        </ul>
+      </div>
+    </div>
+
+    <p class="lead">
+      Below is a table for <b>pattern matching</b>. The <code>pre</code> stage runs before pattern matching.
+      Numbered priority stages <code>1-5</code> run in order. If match is found, the rest of the stages are skipped.
+    </p>
+
+    <h3 class="section-h3-muted">Number handling</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Priority</th><th>Type</th><th>Input</th><th>Output</th></tr></thead>
+        <tbody>
+          <tr><td>pre</td><td>Spaced thousands</td><td><code>1 500 000</code></td><td><code>1500000</code></td></tr>
+          <tr><td>pre</td><td>Degrees</td><td><code>18°C</code></td><td><code>18 grādi</code> (°C/°F/°K → grādi)</td></tr>
+          <tr><td>pre</td><td>Measurement unit</td><td><code>20km</code></td><td><code>20 k m</code> (metric/imperial units)</td></tr>
+          <tr><td>1</td><td>Time (HH:MM)</td><td><code>9:15</code></td><td><code>rīts deviņos 15</code></td></tr>
+          <tr><td>1</td><td>Time (HH:MM + am/pm)</td><td><code>3:35pm</code></td><td><code>diena trijos 30 5</code></td></tr>
+          <tr><td>1</td><td>Time (hour + am/pm)</td><td><code>10pm</code></td><td><code>vakars desmitos</code></td></tr>
+          <tr><td>2</td><td>Mixed alphanumeric</td><td><code>AB12E</code></td><td><code>a b 1 2 e</code></td></tr>
+          <tr><td>3</td><td>Decimal</td><td><code>3,14</code></td><td><code>3 , 1 4</code></td></tr>
+          <tr><td>4</td><td>Ordinal</td><td><code>3.</code></td><td><code>trešais</code></td></tr>
+          <tr><td>5</td><td>Regular</td><td><code>1599</code></td><td><code>1000 500 90 9</code></td></tr>
+          <tr><td>5</td><td>Regular (large)</td><td><code>2000000</code></td><td><code>2 1000000</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 class="section-h3-muted" style="margin:38px 0 20px;">Examples</h3>
+    <div class="flow flow-wrap">
+      <div class="flow-step">Input<small><code>1.25ha</code></small></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">Unit (pre)<small><code>1.25 ha</code></small></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">Decimal (pre)<small><code>[NUM] ha</code></small></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">Name (pre)<small><code>[NUM] [NAME]</code></small></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">T5 Model<small>inference</small></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">Postprocess<small><code>1 . 2 5 h a</code></small></div>
+    </div><br>
+
+    <div class="flow flow-wrap">
+      <div class="flow-step">Input<small><code>10:45am</code></small></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">Time (pre)<small>HH:MMam · <code>[NUM]</code></small></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">T5 Model<small>inference</small></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">Postprocess<small><code>rīts desmitos 40 5</code></small></div>
+    </div>
+  </section>
+
+
+  <div class="section-sep"></div>
+
+  <!-- ═══════════════════════════════════════════════════ MODEL -->
+  <section id="model">
+    <div class="section-label">03 — T5 Model / Dataset</div>
+    <h2>The LSL T5 Model</h2>
+    <p class="lead">
+      The translation backbone is a fine-tuned <strong>mT5-small</strong> model
+      (<a href="https://huggingface.co/google/mt5-small" class="accent">huggingface.co/google/mt5-small</a>)
+      that maps Latvian sentences to LSL gloss sequences with simplified lemmatised approach.
+    </p>
+
+    <h3 class="section-h3">Training Workflow</h3>
+    <p>The model is prepared in 2 sequential notebooks in <code>LSL-t5/code/</code>. 
+      Make sure to have downloaded <b>mT5-small</b> model (~1.2GB) first as instructed in <code>LSL-t5/README.md</code>. 
+      It needs to be done only once and takes ~30 minutes. Run the pruning and training notebooks in order.</p>
+      
+    <div class="flow flow-wrap" style="margin:24px 0 24px;">
+      <div class="flow-step">Download<small>Download <code>mt5-small</code></small></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">Prune<small><code>1_pruning.ipynb</code></small></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">Train<small><code>2_training.ipynb</code></small></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">Deploy<small>Copy to <code>LSL-demo/t5_model/</code></small></div>
+    </div>
+    <div class="card-grid">
+      <div class="card">
+        <h3><span class="icon">✂</span>Step 1. Prune</h3>
+        <p>Scans all <code>txt/*.txt</code> training files and keeps only tokens that actually appear, 
+          shrinking the mT5 embedding and output layers from <strong>250 112 tokens</strong> down to <strong>~2 974</strong>.<br><br>
+          Saves the pruned weights to <code>models/mt5-pruned/</code> together with a <code>vocab_map.json</code> 
+          that maps between the pruned IDs and the original tokenizer IDs.<br><br>
+          Re-run whenever new training text is added so new tokens are included.
+        </p>
+      </div>
+      <div class="card">
+        <h3><span class="icon">⟳</span>Step 2. Train</h3>
+        <p>Loads the pruned model and all LV/gloss text pairs. 
+          Splits into train (93 %) / validation (7 %), with rare glosses (≤ 2 occurrences) forced into train.<br><br>
+          Fine-tunes using Adafactor with early stopping (patience 3). 
+          Each run is saved to a new numbered sub-folder inside <code>models/mt5-lsl-model/</code> along 
+          with a <code>metadata.json</code> summary of metrics and sample predictions.<br><br>
+          Re-run whenever new training text is added to fine-tune on the new dataset.
+        </p>
+      </div>
+      <div class="card">
+        <h3><span class="icon">→</span>Step 3. Deploy</h3>
+        <p>Copy the contents of the best run folder (e.g. <code>models/mt5-lsl-model/4/</code>) into <code>LSL-demo/t5_model/</code>.<br><br>
+          Also copy <code>vocab_map.json</code> from <code>models/mt5-pruned/</code> into the same folder.
+          The demo app needs it for token remapping at inference time.</p>
+      </div>
+    </div>
+
+    <h3 class="section-h3">Training Configuration</h3>
+    <div class="card">
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Parameter</th><th>Value</th></tr></thead>
+          <tbody>
+            <tr><td>Optimizer</td><td>Adafactor</td></tr>
+            <tr><td>Learning rate</td><td>1e-3</td></tr>
+            <tr><td>LR scheduler</td><td>Linear with 10% warmup</td></tr>
+            <tr><td>Batch size</td><td>8</td></tr>
+            <tr><td>Max epochs</td><td>30 (early stopping patience = 3)</td></tr>
+            <tr><td>Weight decay</td><td>0.01</td></tr>
+            <tr><td>Metric for best model</td><td>eval_loss (lower is better)</td></tr>
+            <tr><td>Max sequence length</td><td>128 tokens</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <h3 class="section-h3">Inference</h3>
+    <div class="card">
+      <p>At runtime the model uses beam search with <strong>3 beams</strong> and
+      <code>no_repeat_ngram_size=2</code> to avoid repetitive outputs. The output is a
+      space-separated gloss sequence; each word is then looked up in <code>signs.json</code>
+      to decide whether an animation exists for it.</p>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════ DATASET -->
+  <section id="dataset">
+    <div class="section-label">03 — T5 Model / Dataset</div>
+    <h2>The LSL Dataset</h2>
+    <p class="lead">
+      The training data is a hand-curated set of paired Latvian sentences and their LSL gloss sequences.
+    </p>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Batch</th><th>File</th><th>Topics</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td><code>latvian_sentences_1.txt</code></td><td>Greetings, introductions, personal names</td></tr>
+          <tr><td>2</td><td><code>latvian_sentences_2.txt</code></td><td>Family, household, relationships</td></tr>
+          <tr><td>3</td><td><code>latvian_sentences_3.txt</code></td><td>Colors, hobbies, flowers, gardening, plants</td></tr>
+          <tr><td>4</td><td><code>latvian_sentences_4.txt</code></td><td>Time, calendar, holidays, weather, numbers</td></tr>
+          <tr><td>5</td><td><code>latvian_sentences_5.txt</code></td><td>Money, currency, wages, financial transactions</td></tr>
+          <tr><td>6</td><td><code>latvian_sentences_6.txt</code></td><td>Sign language, deafness, health, medical symptoms</td></tr>
+          <tr><td>7</td><td><code>latvian_sentences_7.txt</code></td><td>Apartment features, living environment</td></tr>
+          <tr><td>8</td><td><code>latvian_sentences_8.txt</code></td><td>Pets, animals, food</td></tr>
+          <tr><td>9</td><td><code>latvian_sentences_9.txt</code></td><td>Latvia, government, cities, geography, traffic</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 class="section-h3">Dataset</h3>
+    <div class="card">
+      <p>
+        The training data consists of paired Latvian sentences and their corresponding LSL gloss
+        sequences, stored as parallel text files (<code>latvian_sentences_N.txt</code> /
+        <code>lsl_glosses_N.txt</code>) in numbered batch files. During training, these are
+        concatenated into a single dataset.
+      </p>
+      <div class="table-wrap" style="margin-top:16px;">
+        <table>
+          <thead><tr><th>Statistic</th><th>Value (run #4)</th></tr></thead>
+          <tbody>
+            <tr><td>Total sentence pairs</td><td>1 914</td></tr>
+            <tr><td>Source files (batches)</td><td>9</td></tr>
+            <tr><td>Training split</td><td>1 782 pairs (93.1%)</td></tr>
+            <tr><td>Validation split</td><td>132 pairs (6.9%)</td></tr>
+            <tr><td>Rare-gloss protection threshold</td><td>≤ 2 occurrences → forced into train</td></tr>
+            <tr><td>Glosses appearing only once</td><td>157</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p style="margin-top:12px;">
+        Glosses that appear in the full dataset ≤ 2 times are always assigned at least one
+        occurrence to the training split, preventing them from being seen only during evaluation.
+      </p>
+    </div>
+
+    <h3 class="section-h3">Adding Training Data</h3>
+    <div class="card">
+      <ol class="detail-list">
+        <li>See the existing batches for reference and pick the most suitable one for the new data.</li>
+        <li>If adding new topic, add a new numbered batch pair in <code>LSL-t5/txt/</code>: <code>latvian_sentences_N.txt</code> and <code>lsl_glosses_N.txt</code>, where N is one higher than the current highest batch number.</li>
+        <li>Both files must have the same number of lines. One Latvian sentence per line and the corresponding space-separated gloss sequence on the matching line.</li>
+        <li>Re-run <code>1_pruning.ipynb</code> so any new tokens introduced by the new text are included in the pruned vocabulary and <code>vocab_map.json</code>.</li>
+        <li>Re-run <code>2_training.ipynb</code> to fine-tune on the expanded dataset. A new numbered run folder will be created automatically inside <code>models/mt5-lsl-model/</code>.</li>
+        <li>Copy the new model weights and the updated <code>vocab_map.json</code> to <code>LSL-demo/t5_model/</code> and redeploy.</li>
+      </ol>
+    </div>
+  </section>
+
+
+  <div class="section-sep"></div>
+
+  <!-- ═══════════════════════════════════════════════════ BLENDER -->
+  <section id="animations">
+    <div class="section-label">04 — Blender Animation Pipeline</div>
+    <h2>The 3D Animation Pipeline</h2>
+    <p class="lead">
+      Sign animations are procedurally authored in <strong>Blender</strong> using an IK-driven
+      rig and Python scripting, then baked frame-by-frame into a single <code>.glb</code> file
+      loaded by the browser.
+    </p>
+
+    <div class="img-placeholder">
+      <span class="ph-icon">⬡</span>
+      <strong>Blender screenshot</strong>
+      A Blender viewport screenshot showing the avatar rig, IK target empties, and the text
+      editor panel with the baking script.
+    </div>
+
+    <h3 class="section-h3">Sign Definition</h3>
+    <div class="card">
+      <p>Every sign the system can animate is defined as an entry in <code>data/signs.json</code>.
+      Each entry specifies, for each hand side, which <strong>hand shape</strong>, <strong>location</strong>,
+      <strong>orientation</strong>, and <strong>movement</strong> to use, plus an optional
+      head action and the hold duration in frames.</p>
+
+      <pre><span class="cm">// Example: sign "karte"</span>
+<span class="str">"karte"</span>: {
+  <span class="key">"right"</span>: {
+    <span class="key">"shape"</span>:       <span class="str">"Hand_L"</span>,
+    <span class="key">"location"</span>:    <span class="str">"Location_Neutral"</span>,
+    <span class="key">"orientation"</span>: <span class="str">"Orientation_Upwards"</span>,
+    <span class="key">"move"</span>:        { <span class="key">"type"</span>: <span class="str">"slide"</span>, <span class="key">"direction"</span>: <span class="str">"right"</span> }
+  },
+  <span class="key">"left"</span>: {
+    <span class="key">"shape"</span>:       <span class="str">"Hand_L"</span>,
+    <span class="key">"location"</span>:    <span class="str">"Location_Neutral"</span>,
+    <span class="key">"orientation"</span>: <span class="str">"Orientation_Upwards"</span>,
+    <span class="key">"move"</span>:        { <span class="key">"type"</span>: <span class="str">"slide"</span>, <span class="key">"direction"</span>: <span class="str">"left"</span> }
+  },
+  <span class="key">"head"</span>: <span class="kw">null</span>,
+  <span class="key">"duration"</span>: <span class="num">14</span>
+}</pre>
+
+      <p style="margin-top:8px;">Signs where one hand is inactive use
+      <code>"shape": "Start_Position"</code> for that side. Those sides are excluded from
+      the Hand_Relaxed finger waypoints during baking, so inactive hands stay still.</p>
+    </div>
+
+    <h3 class="section-h3">Building Blocks</h3>
+    <div class="card-grid">
+      <div class="card">
+        <h3><span class="icon">☛</span>Hand Shapes</h3>
+        <p>Each hand shape is saved as a JSON pose file (<code>LSL_Hand_*.json</code>) containing
+        finger empty transforms.<br><br>Current list include shapes like Latvian fingerspelling alphabet
+        (A-Ž), numbers 0-10, utility shapes <code>Hand_Relaxed</code> and <code>Start_Position</code> and more.</p>
+      </div>
+      <div class="card">
+        <h3><span class="icon">◎</span>Locations</h3>
+        <p>Location files (<code>LSL_Location_*.json</code>) store the 3D position of arm and hand empties.<br><br>
+        Locations can be in front of right side of chest (used for fingerspelling), top of head, 
+        next to side, stretched out in front of the body and more.</p>
+      </div>
+      <div class="card">
+        <h3><span class="icon">↗</span>Orientations</h3>
+        <p>Orientation files (<code>LSL_Orientation_*.json</code>) store elbow and wrist rotation values.<br><br>
+        Orientations include palms facing up, down, left, right, forward, backward, slightly tilted and diagonal combinations.</p>
+      </div>
+      <div class="card">
+        <h3><span class="icon">~</span>Movements</h3>
+        <p>Movements are Python functions that add keyframes on top of the base pose.
+        Each function accepts a start frame, duration and side.<br><br>
+        Animations include movements like <code>slide</code> (ā, ē, ī, ū), <code>halfcircle</code> (d, j), 
+        <code>checkmark</code> (č, ģ, ķ, š, ž), <code>s_shape</code> (s), <code>point_down</code> (t) and more.</p>
+      </div>
+      <div class="card">
+        <h3><span class="icon">⌂</span>Head Actions</h3>
+        <p>Optional non-manual markers applied to the head empty.<br><br>
+        Head actions include slight movements like <code>Head_Nod</code> used for signs like "mans" or slight turns to the side.</p>
+      </div>
+    </div>
+
+    <h3 class="section-h3">Clip Structure &amp; Baking</h3>
+    <p class="lead">Each sign is baked as an independent clip following a fixed frame structure (at 24 fps):</p>
+    <div class="table-wrap" style="margin-top:12px;">
+      <table>
+        <thead><tr><th>Frame</th><th>Event</th></tr></thead>
+        <tbody>
+          <tr><td>Frame 1</td><td>Start_Position. Arm and fingers at rest (neutral)</td></tr>
+          <tr><td>Frame 5 (mid-transition)</td><td>Hand_Relaxed finger waypoint. Smooths finger transition into the sign</td></tr>
+          <tr><td>Frame 9</td><td>Full sign pose. Orientation, shape and start of movement</td></tr>
+          <tr><td>Frames 9 → 9+duration</td><td>Sign held. Movement animation plays</td></tr>
+          <tr><td>Settle frame</td><td>Sign locked at final pose (3 frames after movement end)</td></tr>
+          <tr><td>Mid-return</td><td>Hand_Relaxed finger waypoint. Smooths fingers back out</td></tr>
+          <tr><td>Last frame</td><td>Start_Position. Arm and fingers returned to rest</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="lead">
+      Every clip starts and ends at <strong>Start_Position</strong>, so the viewer's crossfade
+      always blends between two near-identical neutral poses. IK constraints drive the arm path
+      during baking, Constraints are removed before GLB export and the baked bone transforms
+      are written directly to F-curves.
+    </p>
+
+    <div class="img-placeholder" style="margin-top:20px;">
+      <span class="ph-icon">▤</span>
+      <strong>Clip timeline diagram (WIP)</strong>
+      A timeline graphic showing the frame structure (all frames)
+    </div>
+
+    <h3 class="section-h3">Viewer Playback (Three.js)</h3>
+    <div class="card">
+      <p>The baked GLB file is loaded into a Three.js scene inside a sandboxed iframe
+      (<code>LSL-demo/frontend/viewer.html</code>). The viewer:</p>
+      <ul style="margin-top:8px;">
+        <li>Smoothly blends between signs over an 8-frame crossfade window (at 24 fps)</li>
+        <li>Holds the finishing sign in place during the transition so the blend looks clean</li>
+        <li>Keeps 2 copies of every clip and alternates between them. 
+          If the same sign appears twice in a row, the second play uses the other copy, avoiding a brief Three.js T-pose glitch</li>
+        <li>Sends playback progress to the parent page so the progress bar stays in sync</li>
+      </ul>
+    </div>
+
+    <h3 class="section-h3">3D Model &amp; Rig</h3>
+    <div class="card">
+      <p>The avatar currently used is <strong>Kate</strong>, a royalty-free 3D character downloaded as <code>Kate.fbx</code>
+      from <a href="https://www.mixamo.com" class="accent">Mixamo</a> and imported into Blender.
+      The FBX comes with a standard Mixamo armature. The sign pipeline layers IK constraints and
+      control empties on top of it to drive poses procedurally.</p>
+      <div class="table-wrap" style="margin-top:12px;">
+        <table>
+          <thead><tr><th>Component</th><th>Example item</th><th>Role for example item</th></tr></thead>
+          <tbody>
+            <tr><td>Armature</td><td>Armature</td><td>Standard Mixamo bone hierarchy imported with <code>Kate.fbx</code></td></tr>
+            <tr><td>Empties</td><td>Empty_LeftArm <br>Empty_LeftForearm <br>Empty_LeftHand <br>Empty_LeftHandIndex1</td><td>A group of plain 3D axis. Bone Constraints point to these, so moving them drives the full Armature</td></tr>
+            <tr><td>Arm bones</td><td>mixamorig:RightArm</td><td>Have Bone Constraint <b>IK</b> with target <code>Empty_RightArm</code></td></tr>
+            <tr><td>Forearm bones</td><td>mixamorig:RightForeArm</td><td>Have Bone Constraint <b>IK</b> with target <code>Empty_RightHand</code> and <b>Copy Rotation</b> with target <code>Empty_RightForearm</code></td></tr>
+            <tr><td>Hand bones</td><td>mixamorig:RightHand</td><td>Have Bone Constraint <b>Damped Track</b> with target <code>Empty_RightHand</code> and <b>Copy Rotation</b> with target <code>Empty_RightHand</code></td></tr>
+            <tr><td>Finger bones</td><td>mixamorig:RightHandIndex1</td><td>Have Bone Constraint <b>Damped Track</b> with target <code>Empty_RightHandIndex1</code></td></tr>
+            <tr><td>Head bone</td><td>mixamorig:Head</td><td>Have Bone Constraint <b>Damped Track</b> with target <code>Empty_Head</code></td></tr>
+            <tr><td>Shoulder bones</td><td>mixamorig:RightShoulder</td><td>Have Bone Constraint <b>IK</b> with target <code>Empty_RightShoulder</code>. They do not move, but keep the rest of the Armature stable</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <h3 class="section-h3">Script Architecture</h3>
+    <p class="lead">All scripting code lives inside the <code>.blend</code> file's <strong>Scripting</strong> tab.
+    The script uses <code>exec()</code> to load each module from the <code>scripts/</code> folder,
+    with paths resolved relative to the <code>.blend</code> file — so <code>signs.json</code>,
+    <code>poses/</code>, and <code>scripts/</code> must all sit in the same directory as the <code>.blend</code>.</p>
+    <div class="table-wrap" style="margin-top:12px;">
+      <table>
+        <thead><tr><th>Module</th><th>Responsibility</th></tr></thead>
+        <tbody>
+          <tr><td><code>config.py</code></td><td>Constants: armature name, empty object names, poses directory path</td></tr>
+          <tr><td><code>pose_io.py</code></td><td>Load and save pose JSON files; apply transforms to empties</td></tr>
+          <tr><td><code>animation_moves.py</code></td><td>Procedural movement functions (slide, checkmark, halfcircle, etc.) that add keyframes on top of a base pose</td></tr>
+          <tr><td><code>sequence.py</code></td><td>Assembles a multi-sign animation in the viewport for preview — no baking needed</td></tr>
+          <tr><td><code>bake.py</code></td><td>Full bake pipeline: keyframes IK empties → bakes bone transforms → exports all NLA tracks to <code>lsl_model.glb</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 class="section-h3-muted">Key commands to view animations</h3>
+    <pre style="margin-top:8px;"><span class="cm"># Load pose with Hand_*, Location_* or Orientation_*</span>
+load_pose("Hand_A")
+load_pose("Location_Neutral")
+load_pose("Orientation_Upwards")
+
+<span class="cm"># Load pose with filters, like only one finger, only one side</span>
+load_pose("Hand_L", apply_fingers=True, filter_fingers=["Thumb"])
+load_pose("Start_Position", side="right")
+
+<span class="cm"># Display a sequence animation (separate signs with spaces)</span>
+create_sequence("sveiks mans sauc j ā n i s")
+
+<span class="cm"># Clear keyframes and reset to the default pose</span>
+reset_animation()
+    </pre>
+
+    <h3 class="section-h3-muted">Key commands to bake animations</h3>
+    <pre style="margin-top:8px;"><span class="cm"># Bake all signs to GLB (main output)</span>
+bake_all_signs_to_glb()
+
+<span class="cm"># Bake a single sign for faster iteration</span>
+bake_all_signs_to_glb(signs_filter=["a"])
+
+<span class="cm"># Preview a sentence in the viewport without baking</span>
+create_sequence("labdien kā jums klājas")
+
+<span class="cm"># Save a new hand shape / location / orientation from the current viewport pose</span>
+save_pose("Hand_MyShape", include_arm=False)
+save_location_pose("MyLocation")
+save_orientation_pose("MyOrientation")
+  </pre>
+
+  <h3 class="section-h3">Adding a New Sign</h3>
+  <div class="card">
+    <ol class="detail-list">
+      <li>Add an entry to <code>data/signs.json</code> with the desired hand shape, location, orientation and movement for each active hand side.</li>
+      <li>If the required hand shape, location or orientation JSON does not yet exist, create it in Blender and save it with <code>save_pose()</code>.</li>
+      <li>If the required movement type is new, add a Python function to the Blender script.</li>
+      <li>Run <code>bake_all_signs_to_glb()</code> in Blender to regenerate the GLB.</li>
+      <li>Copy the new <code>lsl_model.glb</code> to <code>LSL-demo/3d_model/lsl_3d_model.glb</code> and redeploy.</li>
+    </ol>
+  </div>
+
+  </section>
+
+
+  <div class="section-sep"></div>
+
+  <!-- ═══════════════════════════════════════════════════ ACKNOWLEDGEMENTS -->
+  <section id="acknowledgements">
+    <div class="section-label">05 — Acknowledgements</div>
+    <h2>Acknowledgements</h2>
+    <p class="lead">
+      This project is built on top of several open tools and assets. Credits to the teams and creators behind them.
+    </p>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Tool / Asset</th><th>Used for</th><th>Source</th></tr></thead>
+        <tbody>
+          <tr><td>mT5-small</td><td>Base model for Latvian → LSL gloss translation</td><td><a href="https://huggingface.co/google/mt5-small">huggingface.co/google/mt5-small</a></td></tr>
+          <tr><td>Kate (Mixamo)</td><td>3D avatar character used for sign animations</td><td><a href="https://www.mixamo.com">mixamo.com</a></td></tr>
+          <tr><td>Gradio</td><td>Web interface framework for the demo app</td><td><a href="https://www.gradio.app">gradio.app</a></td></tr>
+          <tr><td>Hugging Face Spaces</td><td>Hosting platform for the live demo</td><td><a href="https://huggingface.co/spaces">huggingface.co/spaces</a></td></tr>
+          <tr><td>Three.js</td><td>3D rendering in the browser (GLB playback)</td><td><a href="https://threejs.org">threejs.org</a></td></tr>
+          <tr><td>Blender</td><td>Rig setup, procedural animation authoring, GLB export</td><td><a href="https://www.blender.org">blender.org</a></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 class="section-h3">Known Limitations</h3>
+    <div class="card">
+      <ul>
+        <li>The model was trained on a small dataset (~1 900 pairs); it performs well on common
+        phrases and the training vocabulary but may produce incorrect glosses for unseen
+        sentence structures.</li>
+        <li>Glosses for words not yet in <code>signs.json</code> are silently skipped during
+        animation — the text translation may be correct but no movement is shown for that word.</li>
+        <li>The number of available sign animations is still growing; many legitimate glosses
+        produced by the model have no animation yet.</li>
+        <li>Inference runs on CPU; response time is a few seconds depending on sentence length.</li>
+      </ul>
+    </div>
+
+    <h3 class="section-h3">Next Steps</h3>
+    <div class="card">
+      <ul>
+        <li>Find a reliable way to expand the dataset. An AI model could be used to generate pairs (Latvian sentence -> LSL gloss) based on existing dataset.</li>
+        <li>Improve T5 model translation quality.</li>
+        <li>Develop more sign animations to cover a wider range of glosses.</li>
+        <li>Get feedback from Latvia's Deaf community on translation and animation accuracy.</li>
+      </ul>
+    </div>
+  </section>
+
+
+  <hr>
+  <p class="footer-note">
+    Latvian Sign Language Demo Handbook by Liene Krista Neimane.
+  </p>
+
+</div><!-- /page-wrap -->
+</body>
+</html>
