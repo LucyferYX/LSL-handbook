@@ -62,7 +62,7 @@ body {
 .hero-sub {
   font-size: 16px;
   color: var(--text-muted);
-  max-width: 530px;
+  max-width: 570px;
   margin-bottom: 32px;
   text-align: justify;
 }
@@ -442,6 +442,33 @@ kbd {
   font-size: 13px;
   font-style: italic;
   margin: 8px 0 16px;
+}
+
+/* ── LANGUAGE SWITCHER ── */
+.lang-switch {
+  position: fixed;
+  top: 20px;
+  right: 24px;
+  z-index: 100;
+}
+.lang-switch a {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 13px;
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-decoration: none;
+  color: var(--text-muted);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  transition: color 0.15s, border-color 0.15s;
+}
+.lang-switch a:hover {
+  color: var(--accent);
+  border-color: var(--accent);
 }
 
 /* ── SCROLLBAR ── */

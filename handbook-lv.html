@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="lv">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LSL Demo Rokasgrāmata</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div class="lang-switch"><a href="handbook-eng.html">EN</a></div>
+
+<!-- ═══════════════════════════════════════════════════════ HERO -->
+<div class="hero">
+  <div class="page-wrap">
+    <div class="hero-label">Projekta Pārskats</div>
+    <h1>Latviešu Zīmju Valodas<br><span>Demo Rokasgrāmata</span></h1>
+    <p class="hero-sub">
+      Šis projekts ir koncepta pierādījuma <i>(Proof of Concept, PoC)</i> zīmju valodas ģenerēšanas 
+      <i>(Sign Language Production, SLP)</i> sistēma <b>latviešu zīmju valodai (LZV)</b>. Tā aptver visu procesu &ndash; 
+      no T5 modeļa, kas tulko latviešu valodas tekstu LZV glosās, līdz zīmju animāciju atveidei uz 3D cilvēka modeļa.
+    </p>
+    <div class="hero-links">
+      <a class="btn btn-primary" href="https://huggingface.co/spaces/LucyferYX/LSL-demo" target="_blank">▶ Lietotnes demo</a>
+      <a class="btn btn-outline" href="https://github.com/LucyferYX/LSL-t5" target="_blank">⌥ T5/Datu kopas repo</a>
+      <a class="btn btn-outline" href="https://github.com/LucyferYX/LSL-blender" target="_blank">⬡ Blender repo</a>
+      <a class="btn btn-outline" href="https://huggingface.co/spaces/LucyferYX/LSL-demo/tree/main" target="_blank">🗲 Gradio lietotnes repo</a>
+    </div>
+  </div>
+</div>
+
+<div class="page-wrap">
+
+  <!-- ── Satura Rādītājs ── -->
+  <div class="toc">
+    <h4>Satura Rādītājs</h4>
+    <ul>
+      <li>
+        <span class="toc-section-label">01 — Pārskats</span>
+        <ul class="toc-sublist">
+          <li><a href="#repos">Repozitoriju pārskats</a></li>
+          <li><a href="#pipeline">Sistēmas darbplūsma</a></li>
+        </ul>
+      </li>
+      <li>
+        <span class="toc-section-label">02 — Gradio lietotne</span>
+        <ul class="toc-sublist">
+          <li><a href="#app">LZV demo lietotnes pārskats</a></li>
+          <li><a href="#prepost">LZV demo lietotnes priekšapstrāde &amp; pēcapstrāde</a></li>
+        </ul>
+      </li>
+      <li>
+        <span class="toc-section-label">03 — T5 Modelis / Datu Kopa</span>
+        <ul class="toc-sublist">
+          <li><a href="#model">LZV T5 modelis</a></li>
+          <li><a href="#dataset">LZV datu kopa</a></li>
+        </ul>
+      </li>
+      <li>
+        <span class="toc-section-label">04 — Blender animāciju darbplūsma</span>
+        <ul class="toc-sublist">
+          <li><a href="#animations">3D animāciju darbplūsma</a></li>
+        </ul>
+      </li>
+      <li>
+        <span class="toc-section-label">05 — Papildus piezīmes</span>
+        <ul class="toc-sublist">
+          <li><a href="#acknowledgements">Papildus piezīmes</a></li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+
+
+  <!-- ═══════════════════════════════════════════════════ REPOS -->
+  <section id="repos">
+    <div class="section-label">01 — Pārskats</div>
+    <h2>Repozitoriju pārskats</h2>
+    <p class="lead">
+      Projekts ir sadalīts <b>4 repozitorijos</b>, kas aptver datu kopu, T5 modeli, 3D modeli, animācijas, rokasgrāmatu un Gradio tīmekļa lietotni.
+      Visi repozitoriji ir savstarpēji neatkarīgi. Klonējiet <i>(clone)</i> tikai tos, kas ir nepieciešami jūsu darbam.
+    </p>
+
+    <div style="margin-bottom:16px;">
+      <pre style="line-height:1.9;">LSL/
+├── LSL-demo/                  <span class="cm"># Gradio tīmekļa lietotne + Three.js viewer</span>
+├── LSL-t5/                    <span class="cm"># mT5 pielāgošanas kods, apmācības kods, datu kopas teksta faili</span>
+├── LSL-blender/               <span class="cm"># Blender skelets <i>(rig)</i>, animāciju izveide, "baking" skripti, koordinātu faili</span>
+└── LSL-handbook/              <span class="cm"># Šī dokumentācija</span>
+      </pre>
+    </div>
+
+    <div class="card-grid" style="grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));">
+      <div class="card">
+        <h3><span class="icon">▶</span>LSL-demo</h3>
+        <p>Lai strādātu ar Gradio tīmekļa demo lietotni.</p>
+        <p class="card-url"><a href="https://huggingface.co/spaces/LucyferYX/LSL-demo/tree/main" class="card-link">huggingface.co/spaces/<br>LucyferYX/LSL-demo</a></p>
+      </div>
+      <div class="card">
+        <h3><span class="icon">⌥</span>LSL-t5</h3>
+        <p>Lai strādātu ar T5 modeli un datu kopu.</p>
+        <p class="card-url"><a href="https://github.com/LucyferYX/LSL-t5" class="card-link">github.com/<br>LucyferYX/LSL-t5</a></p>
+      </div>
+      <div class="card">
+        <h3><span class="icon">⬡</span>LSL-blender</h3>
+        <p>Lai strādātu ar Blender skeletu un animācijām.</p>
+        <p class="card-url"><a href="https://github.com/LucyferYX/LSL-blender" class="card-link">github.com/<br>LucyferYX/LSL-blender</a></p>
+      </div>
+      <div class="card">
+        <h3><span class="icon">◎</span>LSL-handbook</h3>
+        <p>Lai rediģētu šo dokumentāciju.</p>
+        <p class="card-url"><a href="https://github.com/LucyferYX/LSL-handbook" class="card-link">github.com/<br>LucyferYX/LSL-handbook</a></p>
+      </div>
+    </div>
+
+    <h3 class="section-h3-sm">Darba uzsākšanai</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Es vēlos…</th><th>Nepieciešamais repozitorijs</th><th>Rokasgrāmatas sadaļa</th></tr></thead>
+        <tbody>
+          <tr><td>Palaist vai modificēt tīmekļa demo lietotni</td><td><code>LSL-demo</code></td><td><a href="#app">LZV demo lietotnes pārskats</a><br><a href="#prepost">LZV demo lietotnes priekšapstrāde &amp; pēcapstrāde</a></td></tr>
+          <tr><td>Pārapmācīt vai paplašināt tulkošanas modeli</td><td><code>LSL-t5</code> → tad kopējiet modeļa failus uz <code>LSL-demo</code></td><td><a href="#model">LZV T5 modelis</a><br><a href="#dataset">LZV datu kopa</a></td></tr>
+          <tr><td>Pievienot vai rediģēt zīmju animācijas</td><td><code>LSL-blender</code> → tad kopējiet GLB failu uz <code>LSL-demo</code></td><td><a href="#animations">3D animāciju darbplūsma</a></td></tr>
+          <tr><td>Rediģēt šo dokumentāciju</td><td><code>LSL-handbook</code></td><td>-</a></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 class="section-h3">Uzstādīšana</h3>
+    <pre><span class="cm"># 1. Klonējiet izvēlēto repozitoriju</span>
+git clone https://github.com/LucyferYX/LSL-demo
+
+<span class="cm"># 2. Instalējiet pakotnes no requirements.txt</span>
+pip install -r requirements.txt</pre>
+  </section>
+
+
+  <!-- ═══════════════════════════════════════════════════ PIPELINE -->
+  <div class="pipeline-section" id="pipeline">
+    <div class="section-label">01 — Pārskats</div>
+    <h2>Sistēmas darbplūsma</h2>
+    <p>
+      Sistēma sastāv no 3 posmiem:
+      T5 modelis ģenerē glosas no teksta, Blender darbplūsma izveido animācijas,
+      bet Gradio lietotne apvieno abas šīs daļas vienotā sistēmā.
+    </p>
+
+    <div class="flow">
+      <div class="flow-step">Lietotāja ievade<small>Latviešu valoda</small></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">Priekšapstrāde<small>Skaitļi, vārdi, marķieri</small></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">T5 inferēšana<small>Samazināta vārdnīca</small></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">Pēcapstrāde<small>Paplašināšana &amp; daktilēšana</small></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">Zīmju secība<small>Glosu vārdu saraksts</small></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">3D animācija<small>Three.js / GLB klipi</small></div>
+    </div>
+
+    <div class="img-placeholder" style="margin-top:24px;">
+      <span class="ph-icon">◈</span>
+      <strong>Arhitektūras diagramma (WIP)</strong>
+      ...
+    </div>
+  </div>
+
+
+  <div class="section-sep"></div>
+
+  <!-- ═══════════════════════════════════════════════════ APP -->
+  <section id="app">
+    <div class="section-label">02 — Gradio lietotne</div>
+    <h2>LZV demonstrācijas lietotnes pārskats</h2>
+    <p class="lead">
+      Tīmekļa saskarne ir izveidota ar <strong>Gradio Blocks</strong> un izvietota Hugging Face Spaces platformā.
+      Tā ļauj lietotājiem ievadīt teikumu latviešu valodā, apskatīt katru tulkošanas darbplūsmas posmu,
+      redzēt animācijas informāciju un vērot, kā 3D avatars izpilda iegūto LZV zīmju secību.
+    </p>
+
+    <figure class="screenshot-wrap">
+      <img src="images/gradio_app_screenshot.png" alt="LSL Demo Gradio application screenshot">
+    </figure>
+
+    <h3 class="section-h3">Lietotnes izmantošana</h3>
+    <ul class="steps">
+      <li>
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <strong>Ievadiet tekstu latviešu valodā</strong>
+          <p>Ierakstiet teikumu teksta laukā vai nospiediet kādu no zem tā esošajām piemēru pogām.
+          Piemēri tiek nejauši atlasīti no apmācības datu kopas un tos var atjaunināt, nospiežot pogu <b>Refresh</b>.
+          Pēc teksta ievades nospiediet <kbd>Enter</kbd> taustiņu vai pogu ↑.
+          Sistēma veic teksta priekšapstrādi, palaiž T5 modeli un izveido sakārtotu LZV zīmju glosu sarakstu animācijai.</p>
+        </div>
+      </li>
+      <li>
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <strong>Skatieties animāciju</strong>
+          <p>3D avatars (attēlots Three.js iframe logā) secīgi atskaņo katru zīmi, vienmērīgi
+          pārejot starp animāciju klipiem. Izmantojiet ātruma slīdni (0.25x-2x), lai pielāgotu
+          atskaņošanas ātrumu. Izmantojiet atkārtošanas pogu (↻), lai sāktu no jauna, 
+          vai apturēšanas pogu (■), lai pārtrauktu atskaņošanu.</p>
+        </div>
+      </li>
+      <li>
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <strong>Apskatiet darbplūsmu</strong>
+          <p>Atveriet sadaļu <b>Tulkošanas informācija</b>, lai redzētu katru teksta apstrādes posmu: 
+          sākotnējo ievadi, priekšapstrādāto tekstu, modeļa sākotnējo izvadi un galīgo pēcapstrādāto glosu secību.
+          Datu kopas atbilstības indikators parāda, vai teikums ir atrodams apmācības datos un
+          vai T5 modeļa izvade sakrīt ar attiecīgajām glosām. Atveriet sadaļu <b>Animācijas informācija</b>,
+          lai redzētu precīzu LZV animāciju klipu secību, kas tiek atskaņota 3D skatītājā.</p>
+        </div>
+      </li>
+    </ul>
+  </section>
+
+  <div class="section-sep"></div>
+
+  <section>
+    WIP &ndash; Tālākās sadaļas tiks iztulkotas un pievienotas vēlāk. Šobrīd lasiet anglisko versiju.
+  </section>
+
+
+  <hr>
+  <p class="footer-note">
+    Latviešu zīmju valodas demo rokasgrāmata. Autore Liene Krista Neimane.
+  </p>
+
+</div><!-- /page-wrap -->
+</body>
+</html>

@@ -8,14 +8,16 @@
 </head>
 <body>
 
+<div class="lang-switch"><a href="handbook-lv.html">LV</a></div>
+
 <!-- ═══════════════════════════════════════════════════════ HERO -->
 <div class="hero">
   <div class="page-wrap">
     <div class="hero-label">Project Overview</div>
     <h1>Latvian Sign Language<br><span>Demo Handbook</span></h1>
     <p class="hero-sub">
-      A complete working pipeline for <b>Latvian Sign Language (LSL) recreation</b>.
-      From T5 model translating Latvian text into LSL glosses, to rendering sign animations on a 3D human model.
+      This project is a proof-of-concept Sign Language Production (SLP) system for <b>Latvian Sign Language (LSL)</b>
+      &ndash; all from a T5 model translating Latvian text into LSL glosses to rendering sign animations on a 3D human model.
     </p>
     <div class="hero-links">
       <a class="btn btn-primary" href="https://huggingface.co/spaces/LucyferYX/LSL-demo" target="_blank">▶ Live Demo</a>
@@ -60,9 +62,9 @@
         </ul>
       </li>
       <li>
-        <span class="toc-section-label">05 — Acknowledgements</span>
+        <span class="toc-section-label">05 — Additional Notes</span>
         <ul class="toc-sublist">
-          <li><a href="#acknowledgements">Acknowledgements</a></li>
+          <li><a href="#acknowledgements">Additional Notes</a></li>
         </ul>
       </li>
     </ul>
@@ -113,12 +115,12 @@
     <h3 class="section-h3-sm">Quick-start by role</h3>
     <div class="table-wrap">
       <table>
-        <thead><tr><th>I want to…</th><th>Repo needed</th><th>Section</th></tr></thead>
+        <thead><tr><th>I want to…</th><th>Repo needed</th><th>Handbook section</th></tr></thead>
         <tbody>
-          <tr><td>Run or modify the web demo</td><td><code>LSL-demo</code></td><td><a href="#app">The LSL Demo App</a></td></tr>
-          <tr><td>Retrain or expand the translation model</td><td><code>LSL-t5</code> → then copy model files to <code>LSL-demo</code></td><td><a href="#model">The LSL T5 Model</a> &amp; <a href="#dataset">The LSL Dataset</a></td></tr>
+          <tr><td>Run or modify the web demo</td><td><code>LSL-demo</code></td><td><a href="#app">The LSL Demo App Overview</a><br><a href="#prepost">The LSL Demo App Pre- &amp; Post-processing</a></td></tr>
+          <tr><td>Retrain or expand the translation model</td><td><code>LSL-t5</code> → then copy model files to <code>LSL-demo</code></td><td><a href="#model">The LSL T5 Model</a><br><a href="#dataset">The LSL Dataset</a></td></tr>
           <tr><td>Add or edit sign animations</td><td><code>LSL-blender</code> → then copy GLB to <code>LSL-demo</code></td><td><a href="#animations">The 3D Animation Pipeline</a></td></tr>
-          <tr><td>Edit this document</td><td><code>LSL-handbook</code></td><td><a href="#handbook">Handbook</a></td></tr>
+          <tr><td>Edit this document</td><td><code>LSL-handbook</code></td><td>-</a></td></tr>
         </tbody>
       </table>
     </div>
@@ -133,37 +135,38 @@ pip install -r requirements.txt</pre>
 
 
   <!-- ═══════════════════════════════════════════════════ PIPELINE -->
-  <div class="pipeline-section" id="pipeline">
-    <div class="section-label">01 — Overview</div>
-    <h2>System Pipeline</h2>
-    <p>
-      The system consists of 3 stages:
-      the T5 model produces glosses from text, the Blender pipeline produces animations,
-      and the Gradio app wires both together.
-    </p>
+  <section id="pipeline">
+    <div class="pipeline-section" id="pipeline">
+      <div class="section-label">01 — Overview</div>
+      <h2>System Pipeline</h2>
+      <p>
+        The system consists of 3 stages:
+        the T5 model produces glosses from text, the Blender pipeline produces animations,
+        and the Gradio app wires both together.
+      </p>
 
-    <div class="flow">
-      <div class="flow-step">Latvian Text Input<small>User or example chip</small></div>
-      <div class="flow-arrow">→</div>
-      <div class="flow-step">Pre-processing<small>Numbers, names, tokens</small></div>
-      <div class="flow-arrow">→</div>
-      <div class="flow-step">T5 Inference<small>Pruned vocabulary</small></div>
-      <div class="flow-arrow">→</div>
-      <div class="flow-step">Post-processing<small>Expand &amp; fingerspell</small></div>
-      <div class="flow-arrow">→</div>
-      <div class="flow-step">Sign Sequence<small>Gloss word list</small></div>
-      <div class="flow-arrow">→</div>
-      <div class="flow-step">3D Animation<small>Three.js / GLB clips</small></div>
+      <div class="flow">
+        <div class="flow-step">Latvian Text Input<small>User or example chip</small></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">Pre-processing<small>Numbers, names, tokens</small></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">T5 Inference<small>Pruned vocabulary</small></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">Post-processing<small>Expand &amp; fingerspell</small></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">Sign Sequence<small>Gloss word list</small></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">3D Animation<small>Three.js / GLB clips</small></div>
+      </div>
+
+      <div class="img-placeholder" style="margin-top:24px;">
+        <span class="ph-icon">◈</span>
+        <strong>Architecture diagram (WIP)</strong>
+        A flowchart showing the three subsystems (Gradio app, mT5 model, Blender pipeline)
+        and their data boundaries would go here.
+      </div>
     </div>
-
-    <div class="img-placeholder" style="margin-top:24px;">
-      <span class="ph-icon">◈</span>
-      <strong>Architecture diagram (WIP)</strong>
-      A flowchart showing the three subsystems (Gradio app, mT5 model, Blender pipeline)
-      and their data boundaries would go here.
-    </div>
-  </div>
-
+  </section>
 
   <div class="section-sep"></div>
 
@@ -189,9 +192,8 @@ pip install -r requirements.txt</pre>
           <strong>Enter Latvian text</strong>
           <p>Type a Latvian sentence in the text box or click one of the example chips below it.
           Chips are randomly sampled from the training dataset and can be refreshed with the Refresh button.
-          Press <kbd>Enter</kbd>
-          or the ↑ button. The backend preprocesses the text, runs the T5 model and builds an
-          ordered list of LSL sign glosses for animation.</p>
+          Press <kbd>Enter</kbd> or the ↑ button. The backend preprocesses the text, 
+          runs the T5 model and builds an ordered list of LSL sign glosses for animation.</p>
         </div>
       </li>
       <li>
@@ -385,6 +387,8 @@ pip install -r requirements.txt</pre>
       to decide whether an animation exists for it.</p>
     </div>
   </section>
+
+  <div class="section-sep"></div>
 
   <!-- ═══════════════════════════════════════════════════ DATASET -->
   <section id="dataset">
@@ -666,10 +670,10 @@ save_orientation_pose("MyOrientation")
 
   <div class="section-sep"></div>
 
-  <!-- ═══════════════════════════════════════════════════ ACKNOWLEDGEMENTS -->
+  <!-- ═══════════════════════════════════════════════════ ADDITIONAL NOTES -->
   <section id="acknowledgements">
-    <div class="section-label">05 — Acknowledgements</div>
-    <h2>Acknowledgements</h2>
+    <div class="section-label">05 — Additional Notes</div>
+    <h2>Additional Notes</h2>
     <p class="lead">
       This project is built on top of several open tools and assets. Credits to the teams and creators behind them.
     </p>
