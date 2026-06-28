@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>LSL Handbook</title>
+  <script>
+    const lv = navigator.language?.startsWith('lv');
+    location.replace(lv ? 'handbook-lv.html' : 'handbook-eng.html');
+  </script>
+</head>
+<body>
+  <p>Choose language: <a href="handbook-eng.html">English</a> | <a href="handbook-lv.html">Latviešu</a></p>
+</body>
+</html>
